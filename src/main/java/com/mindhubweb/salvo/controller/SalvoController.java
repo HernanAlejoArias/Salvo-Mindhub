@@ -43,7 +43,7 @@ public class SalvoController {
     @PostMapping("/players")
     public ResponseEntity createNewPlayer(@RequestParam("username") String username, @RequestParam("password") String password){
 
-        if ( username == "" || password == "" ) {
+        if ( username.isEmpty() || password.isEmpty() ) {
 
             return new ResponseEntity<>(ErrorMessages.ERROR_EMPTY_VALUE, HttpStatus.BAD_REQUEST);
         } else {
@@ -70,21 +70,21 @@ public class SalvoController {
 
     @PostMapping("/games")
     public ResponseEntity createGame(){
-        Map<String, Long> new_gp = new HashMap<>();
+        Map<String, Long> newGamePlayer = new HashMap<>();
 
         Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
 
         if(loggedPlayer == null){
             return new ResponseEntity<>(ErrorMessages.NOT_LOGGED_IN , HttpStatus.FORBIDDEN);
         }else {
-            Game new_game = new Game();
-            GamePlayer tempGPA = new GamePlayer(new_game, loggedPlayer);
-            gameRepository.save(new_game);
+            Game newGame = new Game();
+            GamePlayer tempGPA = new GamePlayer(newGame, loggedPlayer);
+            gameRepository.save(newGame);
             gamePlayerRepository.save(tempGPA);
 
-            new_gp.put("gpid", tempGPA.getId() );
+            newGamePlayer.put("gpid", tempGPA.getId() );
 
-            return  new ResponseEntity<>(new_gp , HttpStatus.OK);
+            return  new ResponseEntity<>(newGamePlayer , HttpStatus.OK);
         }
 
     }
