@@ -57,3 +57,7 @@ section header {
     right: 0;
     background: gold;
   }
+
+  #btn-new-game {
+    display: none;
+  }

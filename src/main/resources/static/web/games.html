@@ -25,14 +25,15 @@
 				</div>
 				<div class="col-2 align-self-center">
 					<!-- LogIn trigger modal -->
-					<button id="btn-log-in" type="button" class="btn btn-primary .btn-lg" data-toggle="modal" data-target="#LogInModalCenter" class="align-middle">
+					<button id="btn-log-in" type="button" class="btn btn-primary .btn-lg" data-toggle="modal" data-target="#LogInModalCenter"
+					    class="align-middle">
 						Log me In
 					</button>
 					<!-- LogOut trigger modal -->
 					<p>Wellcome back <span id="user-name"></span></p>
 					<button id="btn-log-out" type="button" class="btn btn-primary .btn-lg" class="align-middle">
 						Log Out
-					</button>	
+					</button>
 				</div>
 			</div>
 
@@ -65,8 +66,8 @@
 				</div>
 				<div class="modal-footer">
 					<button id="btn-login-cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-					<button id="btn-login"type="button" class="btn btn-primary">LogIn</button>
-					<button id="btn-signup"type="button" class="btn btn-outline-warning">SignUp </button>
+					<button id="btn-login" type="button" class="btn btn-primary">LogIn</button>
+					<button id="btn-signup" type="button" class="btn btn-outline-warning">SignUp </button>
 				</div>
 			</div>
 		</div>
@@ -76,9 +77,14 @@
 		<div class="row">
 			<section class=col-3>
 				<div id='running-games'>
-					<header>
-						<h1>Games</h1>
-					</header>
+					<div class="row">
+						<div class="col">
+							<header>
+								<h1>Games</h1>
+							</header>
+						</div>
+						<div class="col"><button id="btn-new-game" class="btn btn-info">New Game</button></div>
+					</div>
 					<section>
 						<ol>
 						</ol>

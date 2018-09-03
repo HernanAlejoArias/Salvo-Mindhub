@@ -1,42 +1,8 @@
 $(document).ready(function () {
 	console.log(".Ready!");
 
-	$("#btn-log-in").click(function(){
-		$("#emailHelp").addClass("text-muted");
-		$("#emailHelp").removeClass("text-danger");
-		$("#emailHelp").text("Your email will be used as your User Name");
-		$("#inputEmail").val("");
-		$("#inputPassword").val("");
-	})
+	setListeners();
 
-	$("#btn-login").click(function(){
-		if (correctEmailFormat($("#inputEmail").val())){
-			logInUser($("#inputEmail").val(), $("#inputPassword").val());
-		}else{
-			$("#emailHelp").text("Invalid email");
-			$("#emailHelp").removeClass("text-muted");
-			$("#emailHelp").addClass("text-danger");
-		}
-	});
-
-	$("#btn-log-out").click(function(){
-		logOutUser();
-	});
-
-	$("#btn-signup").click(function(){
-
-		if ($("#inputEmail").val() == "" || $("#inputPassword").val() == ""){
-			alert("Complete the User and Password")
-		}else if (correctEmailFormat($("#inputEmail").val())) {
-			$("#emailHelp").text("Invalid email");
-			$("#emailHelp").removeClass("text-muted");
-			$("#emailHelp").addClass("text-danger");
-		}
-		else{
-			SignUpUser($("#inputEmail").val(), $("#inputPassword").val());
-		}
-	});
-	
 	if ($("#running-games").length > 0) {
 		createGamesPage();
 	}
@@ -70,6 +36,7 @@ function createGamesPage () {
 		createListOfGames(responseData);
 		showLogInLogOut(responseData.player);
 		showWellcomeUser(responseData.player);
+		newGamesAvailable(responseData.player);
 	});
 }
 
@@ -78,6 +45,14 @@ function correctEmailFormat(email){
 
 	return RegExp.test(email); 
 }
+
+function newGamesAvailable(player){
+	if(player == null){
+		$("#btn-new-game").toggle(false);
+	}else{
+		$("#btn-new-game").toggle(true);
+	}
+};
 
 function showWellcomeUser(player){
 	if(player == null){
@@ -290,14 +265,12 @@ function createListOfGames(responseData) {
 				});
 
 				if(loggedPlayer){
-					
-					el_btn_enter_game.attr("href","/web/game.html?gp="+ loggedPlayer.id);
-					el_btn_game = el_btn_enter_game;
+					el_btn_game = $(document.createElement("a")).attr("href","/web/game.html?gp="+ loggedPlayer.id).append(el_btn_enter_game);
 				} else {
 					el_btn_game = el_btn_join_game
 				}
 
-				el_btn_game.data("gameId", game.id);	
+				el_btn_game.data("gameId", game.id);
 				el_li_game.append(el_btn_game);	
 			}
 
@@ -316,4 +289,77 @@ function paramObj(search) {
 	});
 
 	return obj;
+}
+
+function createNewGame(){
+	$.post("/api/games")
+	.done(function(responseData){
+		location.href = "/web/game.html?gp=" + responseData.gpid;
+	})
+	.fail(function(responseData) {
+		alert("Error on the Game Creation: " + responseData.responseText)
+	})
+
+};
+
+function joinGame(gameId){
+	var apiUrl = "/api/game/" + gameId + "/players";
+
+	$.post(apiUrl)
+	.done(function(responseData){
+		location.href = "/web/game.html?gp=" + responseData.gpid;
+	})
+	.fail(function(responseData) {
+		alert("Error Joinning the Game: " + responseData.responseText)
+	})
+};
+
+function setListeners(){
+
+	$("#running-games").on("click", "#btn-new-game", function(){
+		createNewGame();
+	})
+
+	$("#running-games").on("click", ".btn-join-game", function(){
+		var joinGameId =  $(this).data("gameId");
+
+		joinGame(joinGameId);
+
+	})
+
+	$("#btn-log-in").click(function(){
+		$("#emailHelp").addClass("text-muted");
+		$("#emailHelp").removeClass("text-danger");
+		$("#emailHelp").text("Your email will be used as your User Name");
+		$("#inputEmail").val("");
+		$("#inputPassword").val("");
+	})
+
+	$("#btn-login").click(function(){
+		if (correctEmailFormat($("#inputEmail").val())){
+			logInUser($("#inputEmail").val(), $("#inputPassword").val());
+		}else{
+			$("#emailHelp").text("Invalid email");
+			$("#emailHelp").removeClass("text-muted");
+			$("#emailHelp").addClass("text-danger");
+		}
+	});
+
+	$("#btn-log-out").click(function(){
+		logOutUser();
+	});
+
+	$("#btn-signup").click(function(){
+
+		if ($("#inputEmail").val() == "" || $("#inputPassword").val() == ""){
+			alert("Complete the User and Password")
+		}else if (!correctEmailFormat($("#inputEmail").val())) {
+			$("#emailHelp").text("Invalid email");
+			$("#emailHelp").removeClass("text-muted");
+			$("#emailHelp").addClass("text-danger");
+		}
+		else{
+			SignUpUser($("#inputEmail").val(), $("#inputPassword").val());
+		}
+	});
 }

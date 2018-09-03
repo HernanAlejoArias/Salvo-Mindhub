@@ -6,7 +6,7 @@ import com.mindhubweb.salvo.model.Player;
 import com.mindhubweb.salvo.repository.GamePlayerRepository;
 import com.mindhubweb.salvo.repository.GameRepository;
 import com.mindhubweb.salvo.repository.PlayerRepository;
-import com.mindhubweb.salvo.util.Consts;
+import com.mindhubweb.salvo.util.ErrorMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,7 +45,7 @@ public class SalvoController {
 
         if ( username == "" || password == "" ) {
 
-            return new ResponseEntity<>(Consts.ERROR_EMPTY_VALUE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ErrorMessages.ERROR_EMPTY_VALUE, HttpStatus.BAD_REQUEST);
         } else {
             Player player = playerRepository.findByUserName(username);
 
@@ -53,7 +55,7 @@ public class SalvoController {
 
                 return new ResponseEntity<>(createdPlayer.getUserName(), HttpStatus.CREATED);
             }else{
-                return new ResponseEntity<>(Consts.ERROR_NAME_TAKEN, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(ErrorMessages.ERROR_NAME_TAKEN, HttpStatus.FORBIDDEN);
             }
         }
     }
@@ -61,11 +63,30 @@ public class SalvoController {
     @GetMapping("/games")
     public Map<String, Object> getGames(){
 
-        //return gameRepository.findAll().stream().map(Game::makeGameDTO).collect(Collectors.toList());
-
         Player player = playerRepository.findByUserName(getloggedUserName());
 
         return makePlayerGamesDTO(player);
+    }
+
+    @PostMapping("/games")
+    public ResponseEntity createGame(){
+        Map<String, Long> new_gp = new HashMap<>();
+
+        Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
+
+        if(loggedPlayer == null){
+            return new ResponseEntity<>(ErrorMessages.NOT_LOGGED_IN , HttpStatus.FORBIDDEN);
+        }else {
+            Game new_game = new Game();
+            GamePlayer tempGPA = new GamePlayer(new_game, loggedPlayer);
+            gameRepository.save(new_game);
+            gamePlayerRepository.save(tempGPA);
+
+            new_gp.put("gpid", tempGPA.getId() );
+
+            return  new ResponseEntity<>(new_gp , HttpStatus.OK);
+        }
+
     }
 
     private Map<String, Object> makePlayerGamesDTO(Player loggedPlayer){
@@ -79,12 +100,56 @@ public class SalvoController {
         return dto;
     };
 
+    @PostMapping("/game/{gameId}/players")
+    public ResponseEntity joinGame(@PathVariable("gameId") long gameId){
+
+        Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
+        Game selected_game = gameRepository.findById(gameId).orElse(null);
+        Map<String, Long> new_gp = new HashMap<>();
+
+        if(loggedPlayer == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } else if (selected_game == null ){
+            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+        }
+        else {
+
+            Set<GamePlayer> gamePlayersSelectedGame = gamePlayerRepository.findByGame(selected_game);
+
+            if (gamePlayersSelectedGame.size() > 1){
+                return new ResponseEntity<>(ErrorMessages.GAME_FULL , HttpStatus.FORBIDDEN);
+            }else {
+                GamePlayer tempGPA = new GamePlayer(selected_game, loggedPlayer);
+                gamePlayerRepository.save(tempGPA);
+
+                new_gp.put("gpid", tempGPA.getId() );
+
+                return  new ResponseEntity<>(new_gp , HttpStatus.CREATED);
+
+            }
+        }
+
+
+
+        // Falta validar que solo haya un jugador
+        //checks that the game has only one player
+        //if there are two players, it sends a Forbidden response with descriptive text, such as "Game is full"
+    }
+
     @GetMapping("/game_view/{gamePlayer}")
-    public Map<String, Object> getGameView(@PathVariable("gamePlayer") long gamePlayerID){
+    public ResponseEntity getGameView(@PathVariable("gamePlayer") long gamePlayerID){
+
+        Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
 
         GamePlayer gp = gamePlayerRepository.findById(gamePlayerID).orElse(null);
 
-        return gp.makeGameViewDTO();
-
+        if ( loggedPlayer.getId() != gp.getPlayer().getId() ){
+            System.out.println("PLAYER.GET_ID() = " + loggedPlayer.getId());
+            System.out.println("GP.GET_PLAYER().GET_ID() = " + gp.getPlayer().getId());
+            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(gp.makeGameViewDTO() , HttpStatus.OK);
+            //return gp.makeGameViewDTO();
+        }
     }
 }
