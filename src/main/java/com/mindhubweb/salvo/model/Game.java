@@ -35,7 +35,6 @@ public class Game {
         dto.put("id", this.getId());
         dto.put("created", this.getCreationDate());
         dto.put("gamePlayers", this.getGamePlayers().stream().map(GamePlayer::makeGamePlayerDTO));
-        //dto.put("scores", this.getScores().stream().map(Score::makeScoreDTO));
         return dto;
     }
 

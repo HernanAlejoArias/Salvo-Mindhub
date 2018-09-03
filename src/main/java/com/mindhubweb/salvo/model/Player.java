@@ -68,7 +68,7 @@ public class Player {
 
     @JsonIgnore
     public List<Game> getGames(){
-        return gamePlayers.stream().map(gp -> gp.getGame()).collect(toList());
+        return gamePlayers.stream().map(GamePlayer::getGame).collect(toList());
     }
 
     public Set<GamePlayer> getGamePlayers() {
@@ -92,5 +92,5 @@ public class Player {
 
         return scores.stream().filter(sc -> sc.getGame().getId().equals(game.getId())).findFirst().orElse(null);
 
-    };
+    }
 }

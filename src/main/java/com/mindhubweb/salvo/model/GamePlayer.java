@@ -42,13 +42,8 @@ public class GamePlayer {
         this.player = player;
         this.joiningDate = LocalDateTime.now();
         ships.forEach(this::addShip);
-/*        for (Ship ship: ships) {
-            addShip(ship);
-        }*/
+
         salvos.stream().forEach(this::addSalvo);
-/*        for (Salvo salvo: salvos){
-            addSalvo(salvo);
-        }*/
     }
 
     public void addSalvo(Salvo salvo){
