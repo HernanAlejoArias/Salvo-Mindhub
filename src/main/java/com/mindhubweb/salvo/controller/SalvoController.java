@@ -3,6 +3,7 @@ package com.mindhubweb.salvo.controller;
 import com.mindhubweb.salvo.model.Game;
 import com.mindhubweb.salvo.model.GamePlayer;
 import com.mindhubweb.salvo.model.Player;
+import com.mindhubweb.salvo.model.Ship;
 import com.mindhubweb.salvo.repository.GamePlayerRepository;
 import com.mindhubweb.salvo.repository.GameRepository;
 import com.mindhubweb.salvo.repository.PlayerRepository;
@@ -128,12 +129,37 @@ public class SalvoController {
 
             }
         }
+    }
 
+    @PostMapping("/games/players/{gamePlayerId}/ships")
+    public ResponseEntity placeShips(@PathVariable("gamePlayerId") long gamePlayerId, @RequestBody Set<Ship> shipsToPlace){
 
+        Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
+        GamePlayer gamePlayersActive = gamePlayerRepository.findById(gamePlayerId).orElse(null);
 
-        // Falta validar que solo haya un jugador
-        //checks that the game has only one player
-        //if there are two players, it sends a Forbidden response with descriptive text, such as "Game is full"
+        if(loggedPlayer == null){
+            System.out.println("LoggedPlayer NULL");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } else if (gamePlayersActive == null ){
+            System.out.println("GAME_DOESNT_EXIST");
+            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+        } else if (loggedPlayer.getId() != gamePlayersActive.getPlayer().getId()){
+            System.out.println("THAT_IS_NOT_YOUR_PLAYER");
+            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+        } else {
+            if (gamePlayersActive.getShips().isEmpty() ){
+                System.out.println("CREATED");
+
+                gamePlayersActive.setShips(shipsToPlace);
+
+                gamePlayerRepository.save(gamePlayersActive);
+
+                return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+            }else{
+                System.out.println("SHIPS_ALREADY_IN_PLACE");
+                return new ResponseEntity<>(ErrorMessages.SHIPS_ALREADY_IN_PLACE , HttpStatus.FORBIDDEN);
+            }
+        }
     }
 
     @GetMapping("/game_view/{gamePlayer}")
@@ -141,14 +167,12 @@ public class SalvoController {
 
         Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
 
-        GamePlayer gp = gamePlayerRepository.findById(gamePlayerID).orElse(null);
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerID).orElse(null);
 
-        if ( loggedPlayer.getId() != gp.getPlayer().getId() ){
-            System.out.println("PLAYER.GET_ID() = " + loggedPlayer.getId());
-            System.out.println("GP.GET_PLAYER().GET_ID() = " + gp.getPlayer().getId());
+        if ( loggedPlayer.getId() != gamePlayer.getPlayer().getId() ){
             return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
         } else {
-            return new ResponseEntity<>(gp.makeGameViewDTO() , HttpStatus.OK);
+            return new ResponseEntity<>(gamePlayer.makeGameViewDTO() , HttpStatus.OK);
             //return gp.makeGameViewDTO();
         }
     }

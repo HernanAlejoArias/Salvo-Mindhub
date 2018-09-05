@@ -118,6 +118,11 @@ public class GamePlayer {
         return ships;
     }
 
+    public void setShips(Set<Ship> ships){
+        this.ships = ships;
+        ships.forEach(this::addShip);
+    }
+
     public Set<Salvo> getSalvos() {
         return salvos;
     }

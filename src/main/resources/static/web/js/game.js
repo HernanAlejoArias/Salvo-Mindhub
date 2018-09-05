@@ -363,3 +363,26 @@ function setListeners(){
 		}
 	});
 }
+
+function addShipsToGame(gamePlayerID){
+	if(!gamePlayerID){
+		var gamePlayerID = paramObj(window.location.search).gp;
+	}
+	var apiUrl = "/api/games/players/" + gamePlayerID + "/ships";
+
+	$.post({
+		url: apiUrl, 
+  		data: JSON.stringify([ 	{ "type": "destroyer", "locations": ["A1", "B1", "C1"] },
+		  						{ "type": "patrol boat", "locations": ["H5", "H6"] }
+							]),
+  		dataType: "text",
+  		contentType: "application/json"
+	})
+	.done(function(responseData){
+		$(".modal").modal('toggle');
+		createGamesPage();
+	})
+	.fail(function(responseData) {
+		alert("Error Addind Ships: " + responseData.responseText)
+	})
+}

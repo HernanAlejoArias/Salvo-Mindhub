@@ -14,6 +14,7 @@ public final class ErrorMessages {
 
     public static final String GAME_FULL = "Game is full";
 
+    public static final String SHIPS_ALREADY_IN_PLACE = "Ships are already in place";
 
     private ErrorMessages(){
         //this prevents even the native class from
