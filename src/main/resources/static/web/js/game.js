@@ -23,8 +23,63 @@ $(document).ready(function () {
 			placeSalvos(responseData.salvoes);
 		});
 	}
+
+	App.init();
+
 })
 
+class App {
+
+	static init() {
+  
+	  App.box = document.getElementsByClassName('bote')[0]
+  
+	  App.box.addEventListener("dragstart", App.dragstart)
+	  App.box.addEventListener("dragend", App.dragend)
+  
+	  const containers = document.getElementsByClassName('holder')
+  
+	  for(const container of containers) {
+		container.addEventListener("dragover", App.dragover)
+		container.addEventListener("dragenter", App.dragenter)
+		container.addEventListener("dragleave", App.dragleave)
+		container.addEventListener("drop", App.drop)
+	  }
+	}
+  
+	static dragstart() {
+	  this.className += " held"
+	
+	  setTimeout(()=>this.className="invisible", 0)
+	}
+  
+	static dragend() {
+		this.className = "bote"
+		if($(this)[0].id == "patrol-bote-horizontal"){
+			var patrolBoat = new PatrolBoat($(this).first().parent().data("y"), $(this).first().parent().data("x"), true)
+		}
+	}
+  
+	static dragover(e) {
+	  e.preventDefault()
+	}
+  
+	static dragenter(e) {
+	  e.preventDefault()
+	  this.className += " hovered"
+	}
+  
+	static dragleave() {
+	  this.className = "holder"
+	}
+  
+	static drop() {
+	  this.className = "holder"
+	  this.append(App.box)
+	}
+  
+  }
+  
 function createGamesPage () {
 	$("#running-games ol").empty();
 	$("#leader-board").empty();
@@ -218,11 +273,11 @@ function placeShips(ships) {
 }
 
 function createGameGrids() {
-	createGrid($("#game-grid"));
-	createGrid($("#salvoes-grid"))
+	createGrid($("#game-grid"),true);
+	createGrid($("#salvoes-grid", false))
 }
 
-function createGrid(el_grid) {
+function createGrid(el_grid, isDropable) {
 
 	// Filas
 	for (let i = 64; i < 76; i++) {
@@ -239,6 +294,11 @@ function createGrid(el_grid) {
 			} else {
 				el_li_tr.append(el_li_td.text(""));
 				el_li_td.attr("class", String.fromCharCode(i) + j);
+				el_li_td.data("x", j);
+				el_li_td.data("y", String.fromCharCode(i));
+				if(isDropable){
+					el_li_td.addClass("holder");
+				}
 			}
 		}
 	}
@@ -385,4 +445,24 @@ function addShipsToGame(gamePlayerID){
 	.fail(function(responseData) {
 		alert("Error Addind Ships: " + responseData.responseText)
 	})
+}
+
+function PatrolBoat(y,x, isHorizontal) {
+	this.lenght = 2;
+	this.horizontal = isHorizontal;
+	this.locations = [];
+
+	this.setLocation = function(y,x){
+		this.locations.push(y + x );
+		for(var i = 1; i < this.lenght; i++ ){
+			if(this.horizontal){
+				this.locations.push(y + ( x + 1 ));
+			}else{
+				this.locations.push( String.fromCharCode(y.charCodeAt(0) + 1) + x );
+			}
+		}
+	};
+
+	this.setLocation(y,x);
+
 }

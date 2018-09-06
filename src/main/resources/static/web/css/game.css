@@ -1,9 +1,9 @@
 .jumbotron h1 {
   font-size: 4rem;
-} 
+}
 
 section header h1 {
-  font-size:  2rem;
+  font-size: 2rem;
   font-weight: 400;
 }
 
@@ -16,6 +16,11 @@ section header {
   text-align: center;
 }
 
+#game-grid {
+  display: block;
+  border: none;
+}
+
 #running-games {
   border: 1px solid grey;
   border-radius: 10px;
@@ -23,41 +28,92 @@ section header {
 }
 
 .ship {
-    background: darkcyan;   
-    border-radius:5%;
-    z-index: 1;
+  background: darkcyan;
+  border-radius: 5%;
+  z-index: 1;
 }
 
 .salvo {
-    background-color: lightcoral;
-    border-radius: 50%;
-    z-index: 2;
+  background-color: lightcoral;
+  border-radius: 50%;
+  z-index: 2;
 }
 
 .hit {
-    background-image: url("../Fire.gif");
-    background-position:50% 50%;  /* Sets reference point to scale from */
-    background-size:cover;        /* Sets background image to cover entire element */
-    font-weight: bold;
+  background-image: url("../Fire.gif");
+  background-position: 50% 50%;
+  /* Sets reference point to scale from */
+  background-size: cover;
+  /* Sets background image to cover entire element */
+  font-weight: bold;
 }
 
-  td {
-    width: 9.09%;
-    position: relative;
-  }
-  td:after {
-    content: '';
-    display: block;
-  }
-  td .content {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: gold;
-  }
+tr {
+  display: block;
+  border: none;
+}
 
-  #btn-new-game {
-    display: none;
-  }
+td {
+  padding: 0px;
+  margin: 0%;
+  width: 3em;
+  height: 3em;
+  position: relative;
+  display: inline-block;
+}
+
+td:after {
+  content: '';
+  display: inline-block;
+}
+
+td .content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: gold;
+}
+
+#btn-new-game {
+  display: none;
+}
+
+td.holder {
+  margin: 0px;
+  padding: 0px;
+}
+
+.bote {
+  background-position: 50% 50%;
+  /* Sets reference point to scale from */
+  background-size: cover;
+  /* Sets background image to cover entire element */
+  /* border: 1px solid blue; */
+}
+
+#patrol-bote-horizontal {
+  width: 6em;
+  height: 3em;
+  background-image: url("../resources/PatrolBoat.gif");
+  background-size: 6em 3em;
+  background-repeat: no-repeat;
+
+}
+
+#patrol-bote-vertical {
+  width: 3em;
+  height: 6em;
+  background-color: aqua;
+  display: block;
+}
+
+#battleship-horizontal{
+  width: 12em;
+  height: 3em;
+  background-image: url("../resources/BattleShip.gif");
+  background-size: 12em 3em;
+  background-repeat: no-repeat;
+
+}
