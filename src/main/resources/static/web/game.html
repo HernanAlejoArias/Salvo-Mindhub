@@ -10,6 +10,7 @@
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	    crossorigin="anonymous">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css" />
 	<link rel="stylesheet" href="css/game.css">
 
 	<title>Salvo On-line</title>
@@ -50,10 +51,147 @@
 					<h1 class="text-center">Your fleet...</h1>
 				</header>
 
-				<div style="height: 10em; width: 30em">
-					<div id="patrol-bote-horizontal" class="bote" draggable="true"></div>
-					<div id="battleship-horizontal" class="bote" draggable="true"></div>
+				<div style="height: 15em; width: 30em">
+					<div id="aircraft-carrier" class="bote" draggable="true"></div>
+					<div id="battleship" class="bote" draggable="true"></div>
+					<div id="submarine" class="bote" draggable="true"></div>
+					<div id="destroyer" class="bote" draggable="true"></div>
+					<div id="patrol-boat" class="bote" draggable="true"></div>
 				</div>
+
+				<div>
+					<div class="div-tr">
+							<div class="header-numeros"></div><!--
+							--><div class="header-numeros">1</div><!--
+							--><div class="header-numeros">2</div><!--
+							--><div class="header-numeros">3</div><!--
+							--><div class="header-numeros">4</div><!--
+							--><div class="header-numeros">5</div><!--
+							--><div class="header-numeros">6</div><!--
+							--><div class="header-numeros">7</div><!--
+							--><div class="header-numeros">8</div><!--
+							--><div class="header-numeros">9</div><!--
+							--><div class="header-numeros">10</div>
+					</div>	
+					<div class="div-tr">
+							<div class="header-letras">A</div><!--
+							--><div class="holder" data-x="1" data-y="A"></div><!--
+							--><div class="holder" data-x="2" data-y="A"></div><!--
+							--><div class="holder" data-x="3" data-y="A"></div><!--
+							--><div class="holder" data-x="4" data-y="A"></div><!--
+							--><div class="holder" data-x="5" data-y="A"></div><!--
+							--><div class="holder" data-x="6" data-y="A"></div><!--
+							--><div class="holder" data-x="7" data-y="A"></div><!--
+							--><div class="holder" data-x="8" data-y="A"></div><!--
+							--><div class="holder" data-x="9" data-y="A"></div><!--
+							--><div class="holder" data-x="10" data-y="A"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">B</div><!--
+							--><div class="holder" data-x="1" data-y="B"></div><!--
+							--><div class="holder" data-x="2" data-y="B"></div><!--
+							--><div class="holder B4" data-x="3" data-y="B"></div><!--
+							--><div class="holder B5" data-x="4" data-y="B"></div><!--
+							--><div class="holder" data-x="5" data-y="B"></div><!--
+							--><div class="holder" data-x="6" data-y="B"></div><!--
+							--><div class="holder" data-x="7" data-y="B"></div><!--
+							--><div class="holder" data-x="8" data-y="B"></div><!--
+							--><div class="holder" data-x="9" data-y="B"></div><!--
+							--><div class="holder" data-x="10" data-y="B"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">C</div><!--
+							--><div class="holder" data-x="1" data-y="C"></div><!--
+							--><div class="holder" data-x="2" data-y="C"></div><!--
+							--><div class="holder" data-x="3" data-y="C"></div><!--
+							--><div class="holder" data-x="4" data-y="C"></div><!--
+							--><div class="holder" data-x="5" data-y="C"></div><!--
+							--><div class="holder" data-x="6" data-y="C"></div><!--
+							--><div class="holder" data-x="7" data-y="C"></div><!--
+							--><div class="holder" data-x="8" data-y="C"></div><!--
+							--><div class="holder" data-x="9" data-y="C"></div><!--
+							--><div class="holder" data-x="10" data-y="C"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">D</div><!--
+							--><div class="holder" data-x="1" data-y="D"></div><!--
+							--><div class="holder" data-x="2" data-y="D"></div><!--
+							--><div class="holder" data-x="3" data-y="D"></div><!--
+							--><div class="holder" data-x="4" data-y="D"></div><!--
+							--><div class="holder" data-x="5" data-y="D"></div><!--
+							--><div class="holder" data-x="6" data-y="D"></div><!--
+							--><div class="holder" data-x="7" data-y="D"></div><!--
+							--><div class="holder" data-x="8" data-y="D"></div><!--
+							--><div class="holder" data-x="9" data-y="D"></div><!--
+							--><div class="holder" data-x="10" data-y="D"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">E</div><!--
+							--><div class="holder" data-x="1" data-y="E"></div><!--
+							--><div class="holder" data-x="2" data-y="E"></div><!--
+							--><div class="holder" data-x="3" data-y="E"></div><!--
+							--><div class="holder" data-x="4" data-y="E"></div><!--
+							--><div class="holder" data-x="5" data-y="E"></div><!--
+							--><div class="holder" data-x="6" data-y="E"></div><!--
+							--><div class="holder" data-x="7" data-y="E"></div><!--
+							--><div class="holder" data-x="8" data-y="E"></div><!--
+							--><div class="holder" data-x="9" data-y="E"></div><!--
+							--><div class="holder" data-x="10" data-y="E"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">F</div><!--
+							--><div class="holder" data-x="1" data-y="F"></div><!--
+							--><div class="holder" data-x="2" data-y="F"></div><!--
+							--><div class="holder" data-x="3" data-y="F"></div><!--
+							--><div class="holder" data-x="4" data-y="F"></div><!--
+							--><div class="holder" data-x="5" data-y="F"></div><!--
+							--><div class="holder" data-x="6" data-y="F"></div><!--
+							--><div class="holder" data-x="7" data-y="F"></div><!--
+							--><div class="holder" data-x="8" data-y="F"></div><!--
+							--><div class="holder" data-x="9" data-y="F"></div><!--
+							--><div class="holder" data-x="10" data-y="F"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">G</div><!--
+							--><div class="holder" data-x="1" data-y="G"></div><!--
+							--><div class="holder" data-x="2" data-y="G"></div><!--
+							--><div class="holder" data-x="3" data-y="G"></div><!--
+							--><div class="holder" data-x="4" data-y="G"></div><!--
+							--><div class="holder" data-x="5" data-y="G"></div><!--
+							--><div class="holder" data-x="6" data-y="G"></div><!--
+							--><div class="holder" data-x="7" data-y="G"></div><!--
+							--><div class="holder" data-x="8" data-y="G"></div><!--
+							--><div class="holder" data-x="9" data-y="G"></div><!--
+							--><div class="holder" data-x="10" data-y="G"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">H</div><!--
+							--><div class="holder" data-x="1" data-y="H"></div><!--
+							--><div class="holder" data-x="2" data-y="H"></div><!--
+							--><div class="holder" data-x="3" data-y="H"></div><!--
+							--><div class="holder" data-x="4" data-y="H"></div><!--
+							--><div class="holder" data-x="5" data-y="H"></div><!--
+							--><div class="holder" data-x="6" data-y="H"></div><!--
+							--><div class="holder" data-x="7" data-y="H"></div><!--
+							--><div class="holder" data-x="8" data-y="H"></div><!--
+							--><div class="holder" data-x="9" data-y="H"></div><!--
+							--><div class="holder" data-x="10" data-y="H"></div>
+					</div>
+					<div class="div-tr">
+							<div class="header-letras">I</div><!--
+							--><div class="holder" data-x="1" data-y="I"></div><!--
+							--><div class="holder" data-x="2" data-y="I"></div><!--
+							--><div class="holder" data-x="3" data-y="I"></div><!--
+							--><div class="holder" data-x="4" data-y="I"></div><!--
+							--><div class="holder" data-x="5" data-y="I"></div><!--
+							--><div class="holder" data-x="6" data-y="I"></div><!--
+							--><div class="holder" data-x="7" data-y="I"></div><!--
+							--><div class="holder" data-x="8" data-y="I"></div><!--
+							--><div class="holder" data-x="9" data-y="I"></div><!--
+							--><div class="holder" data-x="10" data-y="I"></div>
+					</div>
+								</div>
+
 
 				<table id="game-grid" class="table table-bordered text-center">
 				</table>
@@ -77,6 +215,13 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	    crossorigin="anonymous"></script>
 	<script src="js/game.js"></script>
+	<script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
+	<script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+	<script type="text/javascript">
+		$(function () {
+			$('.grid-stack').gridstack();
+		});
+	</script>
 </body>
 
 </html>

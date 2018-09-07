@@ -1,3 +1,6 @@
+var patrolBoat;
+var battleship; 
+
 $(document).ready(function () {
 	console.log(".Ready!");
 
@@ -31,62 +34,93 @@ $(document).ready(function () {
 class App {
 
 	static init() {
-  
-	  App.box = document.getElementsByClassName('bote')[0]
-  
-	  App.box.addEventListener("dragstart", App.dragstart)
-	  App.box.addEventListener("dragend", App.dragend)
-  
-	  const containers = document.getElementsByClassName('holder')
-  
-	  for(const container of containers) {
-		container.addEventListener("dragover", App.dragover)
-		container.addEventListener("dragenter", App.dragenter)
-		container.addEventListener("dragleave", App.dragleave)
-		container.addEventListener("drop", App.drop)
-	  }
-	}
-  
-	static dragstart() {
-	  this.className += " held"
-	
-	  setTimeout(()=>this.className="invisible", 0)
-	}
-  
-	static dragend() {
-		this.className = "bote"
-		if($(this)[0].id == "patrol-bote-horizontal"){
-			var patrolBoat = new PatrolBoat($(this).first().parent().data("y"), $(this).first().parent().data("x"), true)
+
+		App.box = document.getElementsByClassName('bote')
+
+		for (var i = 0; i < 2; i++) {
+			App.box[i].addEventListener("dragstart", App.dragstart)
+			App.box[i].addEventListener("dragend", App.dragend)	
+		}
+
+		const containers = document.getElementsByClassName('holder')
+
+		for (const container of containers) {
+			container.addEventListener("dragover", App.dragover)
+			container.addEventListener("dragenter", App.dragenter)
+			container.addEventListener("dragleave", App.dragleave)
+			container.addEventListener("drop", App.drop)
 		}
 	}
-  
+
+	static dragstart() {
+		// setTimeout(() => this.className = "invisible", 0)
+		this.className += " held"
+	}
+
+	static dragend(ev) {
+		// $(this).className = "bote";
+		// // if ($('.held').hasClass("vertical")){
+		// // 	$(this).addClass("vertical");
+		// // }
+		$(this).addClass("bote")
+		$(this).removeClass("held");
+		console.log("draEnd")
+	}
+
 	static dragover(e) {
-	  e.preventDefault()
+		e.preventDefault()
 	}
-  
+
 	static dragenter(e) {
-	  e.preventDefault()
-	  this.className += " hovered"
+		e.preventDefault()
+		this.className += " hovered"
 	}
-  
+
 	static dragleave() {
-	  this.className = "holder"
+		this.className = "holder"
 	}
-  
-	static drop() {
-	  this.className = "holder"
-	  this.append(App.box)
+	
+	static drop(ev) {
+		ev.preventDefault();
+		var isHorizontal;
+		console.log("drop");
+		var boat;
+		
+		if ($('.held').hasClass("vertical")) {
+			isHorizontal = false;
+		} else {
+			isHorizontal = true;
+		}
+
+		if ($('.held').attr("id") === "patrol-boat"){
+			patrolBoat = new PatrolBoat("patrol-boat", $(ev.target).data("y"), $(ev.target).data("x"), isHorizontal);
+			boat = patrolBoat;
+		} if ($('.held').attr("id") === "battleship"){
+			battleship = new PatrolBoat("battleship", $(ev.target).data("y"), $(ev.target).data("x"), isHorizontal)
+			boat = battleship;
+		}
+
+		if(boat.isLocationPermited($(ev.target).data("y"), $(ev.target).data("x"), isHorizontal)){
+
+			for(var i = 0; i < 2; i++){
+				if(App.box[i].id === $('.held').attr("id")){
+					this.append($(App.box)[i])
+				}
+			}
+			//this.append($(App.box).find($('.held').attr("id")))
+		} else {
+			patrolBoat = null
+		}
 	}
-  
-  }
-  
-function createGamesPage () {
+}
+
+function createGamesPage() {
 	$("#running-games ol").empty();
 	$("#leader-board").empty();
 
 	$.get("http://localhost:8080/api/games", function (responseData) {
 		console.log("api/games -> .get")
-	}).done(function(responseData){
+	}).done(function (responseData) {
 		createLeaderBoard(responseData.games);
 		createListOfGames(responseData);
 		showLogInLogOut(responseData.player);
@@ -95,65 +129,73 @@ function createGamesPage () {
 	});
 }
 
-function correctEmailFormat(email){
+function correctEmailFormat(email) {
 	var RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-	return RegExp.test(email); 
+	return RegExp.test(email);
 }
 
-function newGamesAvailable(player){
-	if(player == null){
+function newGamesAvailable(player) {
+	if (player == null) {
 		$("#btn-new-game").toggle(false);
-	}else{
+	} else {
 		$("#btn-new-game").toggle(true);
 	}
 };
 
-function showWellcomeUser(player){
-	if(player == null){
+function showWellcomeUser(player) {
+	if (player == null) {
 		$("#user-name").parent().toggle(false);
-	}else{
+	} else {
 		$("#user-name").parent().toggle(true);
 		$("#user-name").text(player.email);
 	}
 };
 
-function showLogInLogOut(player){
+function showLogInLogOut(player) {
 	if (player == null) {
-		$("#btn-log-out").toggle( false );
-		$("#btn-log-in").toggle( true );
-	}else {
-		$("#btn-log-out").toggle( true );
-		$("#btn-log-in").toggle( false );	}
+		$("#btn-log-out").toggle(false);
+		$("#btn-log-in").toggle(true);
+	} else {
+		$("#btn-log-out").toggle(true);
+		$("#btn-log-in").toggle(false);
+	}
 }
 
-function logInUser(email, password){
-	$.post("/api/login", { username: email, password: password })
-		.done(function(){
+function logInUser(email, password) {
+	$.post("/api/login", {
+			username: email,
+			password: password
+		})
+		.done(function () {
 			$(".modal").modal('toggle');
 			createGamesPage();
 		})
-		.fail(function() {
+		.fail(function () {
 			$("#emailHelp").removeClass("text-muted");
 			$("#emailHelp").addClass("text-danger");
 			$("#emailHelp").text("Please check the User and Password");
 		})
 }
 
-function SignUpUser(email, password){
-	$.post("/api/players", { username: email, password: password })
-		.done(function(){
+function SignUpUser(email, password) {
+	$.post("/api/players", {
+			username: email,
+			password: password
+		})
+		.done(function () {
 			logInUser(email, password);
 		})
-		.fail(function(data) {
+		.fail(function (data) {
 			$("#emailHelp").removeClass("text-muted");
 			$("#emailHelp").addClass("text-danger");
 			$("#emailHelp").text(data.responseText);
 		})
 }
-function logOutUser(){
+
+function logOutUser() {
 	$.post("/api/logout")
-		.done(function(){
+		.done(function () {
 			location.replace("/web/games.html");
 			createGamesPage();
 		})
@@ -257,7 +299,7 @@ function playersData(gamePlayers, gamePlayerID) {
 	$.each(gamePlayers, function (index, player) {
 		if (gamePlayerID == player.gamePlayerID) {
 			$("#P1").text(player.player.email);
-			 playerOne = player.player;
+			playerOne = player.player;
 		} else {
 			$("#P2").text(player.player.email);
 		}
@@ -273,7 +315,7 @@ function placeShips(ships) {
 }
 
 function createGameGrids() {
-	createGrid($("#game-grid"),true);
+	createGrid($("#game-grid"), true);
 	createGrid($("#salvoes-grid", false))
 }
 
@@ -296,7 +338,7 @@ function createGrid(el_grid, isDropable) {
 				el_li_td.attr("class", String.fromCharCode(i) + j);
 				el_li_td.data("x", j);
 				el_li_td.data("y", String.fromCharCode(i));
-				if(isDropable){
+				if (isDropable) {
 					el_li_td.addClass("holder");
 				}
 			}
@@ -324,14 +366,14 @@ function createListOfGames(responseData) {
 					return element.player.id === responseData.player.id
 				});
 
-				if(loggedPlayer){
-					el_btn_game = $(document.createElement("a")).attr("href","/web/game.html?gp="+ loggedPlayer.id).append(el_btn_enter_game);
+				if (loggedPlayer) {
+					el_btn_game = $(document.createElement("a")).attr("href", "/web/game.html?gp=" + loggedPlayer.id).append(el_btn_enter_game);
 				} else {
 					el_btn_game = el_btn_join_game
 				}
 
 				el_btn_game.data("gameId", game.id);
-				el_li_game.append(el_btn_game);	
+				el_li_game.append(el_btn_game);
 			}
 
 			return el_li_game;
@@ -351,43 +393,51 @@ function paramObj(search) {
 	return obj;
 }
 
-function createNewGame(){
+function createNewGame() {
 	$.post("/api/games")
-	.done(function(responseData){
-		location.href = "/web/game.html?gp=" + responseData.gpid;
-	})
-	.fail(function(responseData) {
-		alert("Error on the Game Creation: " + responseData.responseText)
-	})
+		.done(function (responseData) {
+			location.href = "/web/game.html?gp=" + responseData.gpid;
+		})
+		.fail(function (responseData) {
+			alert("Error on the Game Creation: " + responseData.responseText)
+		})
 
 };
 
-function joinGame(gameId){
+function joinGame(gameId) {
 	var apiUrl = "/api/game/" + gameId + "/players";
 
 	$.post(apiUrl)
-	.done(function(responseData){
-		location.href = "/web/game.html?gp=" + responseData.gpid;
-	})
-	.fail(function(responseData) {
-		alert("Error Joinning the Game: " + responseData.responseText)
-	})
+		.done(function (responseData) {
+			location.href = "/web/game.html?gp=" + responseData.gpid;
+		})
+		.fail(function (responseData) {
+			alert("Error Joinning the Game: " + responseData.responseText)
+		})
 };
 
-function setListeners(){
+function setListeners() {
 
-	$("#running-games").on("click", "#btn-new-game", function(){
+	$("#running-games").on("click", "#btn-new-game", function () {
 		createNewGame();
 	})
 
-	$("#running-games").on("click", ".btn-join-game", function(){
-		var joinGameId =  $(this).data("gameId");
+	$("#running-games").on("click", ".btn-join-game", function () {
+		var joinGameId = $(this).data("gameId");
 
 		joinGame(joinGameId);
 
 	})
 
-	$("#btn-log-in").click(function(){
+	$(".bote").click(function(){
+		if ($(this).hasClass("vertical")){
+			$(this).removeClass("vertical");
+		}else{
+			$(this).addClass("vertical");
+		}
+	})
+
+	$("#btn-log-in").click(function () {
 		$("#emailHelp").addClass("text-muted");
 		$("#emailHelp").removeClass("text-danger");
 		$("#emailHelp").text("Your email will be used as your User Name");
@@ -395,74 +445,104 @@ function setListeners(){
 		$("#inputPassword").val("");
 	})
 
-	$("#btn-login").click(function(){
-		if (correctEmailFormat($("#inputEmail").val())){
+	$("#btn-login").click(function () {
+		if (correctEmailFormat($("#inputEmail").val())) {
 			logInUser($("#inputEmail").val(), $("#inputPassword").val());
-		}else{
+		} else {
 			$("#emailHelp").text("Invalid email");
 			$("#emailHelp").removeClass("text-muted");
 			$("#emailHelp").addClass("text-danger");
 		}
 	});
 
-	$("#btn-log-out").click(function(){
+	$("#btn-log-out").click(function () {
 		logOutUser();
 	});
 
-	$("#btn-signup").click(function(){
+	$("#btn-signup").click(function () {
 
-		if ($("#inputEmail").val() == "" || $("#inputPassword").val() == ""){
+		if ($("#inputEmail").val() == "" || $("#inputPassword").val() == "") {
 			alert("Complete the User and Password")
-		}else if (!correctEmailFormat($("#inputEmail").val())) {
+		} else if (!correctEmailFormat($("#inputEmail").val())) {
 			$("#emailHelp").text("Invalid email");
 			$("#emailHelp").removeClass("text-muted");
 			$("#emailHelp").addClass("text-danger");
-		}
-		else{
+		} else {
 			SignUpUser($("#inputEmail").val(), $("#inputPassword").val());
 		}
 	});
 }
 
-function addShipsToGame(gamePlayerID){
-	if(!gamePlayerID){
+function addShipsToGame(gamePlayerID) {
+	if (!gamePlayerID) {
 		var gamePlayerID = paramObj(window.location.search).gp;
 	}
 	var apiUrl = "/api/games/players/" + gamePlayerID + "/ships";
 
 	$.post({
-		url: apiUrl, 
-  		data: JSON.stringify([ 	{ "type": "destroyer", "locations": ["A1", "B1", "C1"] },
-		  						{ "type": "patrol boat", "locations": ["H5", "H6"] }
-							]),
-  		dataType: "text",
-  		contentType: "application/json"
-	})
-	.done(function(responseData){
-		$(".modal").modal('toggle');
-		createGamesPage();
-	})
-	.fail(function(responseData) {
-		alert("Error Addind Ships: " + responseData.responseText)
-	})
+			url: apiUrl,
+			data: JSON.stringify([{
+					"type": "destroyer",
+					"locations": ["A1", "B1", "C1"]
+				},
+				{
+					"type": "patrol boat",
+					"locations": ["H5", "H6"]
+				}
+			]),
+			dataType: "text",
+			contentType: "application/json"
+		})
+		.done(function (responseData) {
+			$(".modal").modal('toggle');
+			createGamesPage();
+		})
+		.fail(function (responseData) {
+			alert("Error Addind Ships: " + responseData.responseText)
+		})
 }
 
-function PatrolBoat(y,x, isHorizontal) {
-	this.lenght = 2;
+function PatrolBoat(boteType, y, x, isHorizontal) {
+
+	if (boteType === "patrol-boat"){
+		this.lenght = 2;
+	}
+	else if ($('.held').attr("id") === "battleship"){
+		this.lenght = 4;
+	}
+	
 	this.horizontal = isHorizontal;
 	this.locations = [];
 
-	this.setLocation = function(y,x){
-		this.locations.push(y + x );
-		for(var i = 1; i < this.lenght; i++ ){
-			if(this.horizontal){
-				this.locations.push(y + ( x + 1 ));
-			}else{
-				this.locations.push( String.fromCharCode(y.charCodeAt(0) + 1) + x );
+	this.setLocation = function (y, x) {
+		this.locations.push(y + x);
+		for (var i = 1; i < this.lenght; i++) {
+			if (this.horizontal) {
+				this.locations.push(y + (x + 1));
+			}
+			else {
+				this.locations.push(String.fromCharCode(y.charCodeAt(0) + 1) + x);
 			}
 		}
 	};
 
-	this.setLocation(y,x);
+	this.setLocation(y, x);
 
+	this.isLocationPermited = function (y, x, isHorizontal){
+		if(isHorizontal){
+			if (( x + (this.lenght - 1) <= 10 )){
+				return true;
+			}
+			else {
+				return false
+			}			
+		} else {
+			if (( y.charCodeAt(0) + (this.lenght - 1) ) <= 73 ){
+				return true;
+			}
+			else {
+				return false
+			}
+		}
+	}
 }

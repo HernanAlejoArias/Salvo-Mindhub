@@ -87,33 +87,110 @@ td.holder {
 
 .bote {
   background-position: 50% 50%;
-  /* Sets reference point to scale from */
   background-size: cover;
-  /* Sets background image to cover entire element */
-  /* border: 1px solid blue; */
+  position: sticky;
+  border: solid greenyellow 1px;
 }
-
-#patrol-bote-horizontal {
-  width: 6em;
+#aircraft-carrier{
+  width: 15em;
   height: 3em;
-  background-image: url("../resources/PatrolBoat.gif");
-  background-size: 6em 3em;
-  background-repeat: no-repeat;
-
+  background-image: url("../resources/Carrier.gif");
+  background-size: 15em 3em;
 }
 
-#patrol-bote-vertical {
+#aircraft-carrier.vertical{
   width: 3em;
-  height: 6em;
-  background-color: aqua;
-  display: block;
+  height: 15em;
+  background-image: url("../resources/Carrier-vertical.gif");
+  background-size: 3em 15em;
 }
 
-#battleship-horizontal{
+#battleship{
   width: 12em;
   height: 3em;
   background-image: url("../resources/BattleShip.gif");
   background-size: 12em 3em;
-  background-repeat: no-repeat;
+}
 
+#battleship.vertical{
+  width: 3em;
+  height: 12em;
+  background-image: url("../resources/BattleShip-vertical.gif");
+  background-size: 3em 12em;
+}
+
+#submarine{
+  width: 9em;
+  height: 3em;
+  background-image: url("../resources/Submarino.gif");
+  background-size: 9em 3em;
+}
+
+#submarine.vertical{
+  width: 3em;
+  height: 9em;
+  background-image: url("../resources/Submarino-vertical.gif");
+  background-size: 3em 9em;
+}
+
+#destroyer{
+  width: 9em;
+  height: 3em;
+  background-image: url("../resources/Destroyer.gif");
+  background-size: 9em 3em;
+}
+
+#destroyer.vertical{
+  width: 3em;
+  height: 9em;
+  background-image: url("../resources/Destroyer-vertical.gif");
+  background-size: 3em 9em;
+}
+
+#patrol-boat {
+  width: 6em;
+  height: 3em;
+  background-image: url("../resources/PatrolBoat.gif");
+  background-size: 6em 3em;
+}
+
+#patrol-boat.vertical {
+  width: 3em;
+  height: 6em;
+  background-image: url("../resources/PatrolBoat-vertical.gif");
+  background-size: 3em 6em;
+}
+
+div.holder {
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  display:inline-block;
+  width: 3em;
+  height: 3em;
+  border: solid lightslategray 1px;
+}
+
+.div-tr {
+  height: 3em;
+  width: 33em;
+  margin-bottom: 0px;
+}
+
+div.header-numeros {
+  border: none;
+  display:inline-block;
+  width: 3em;
+  height: 3em;
+  margin-bottom: -1em;
+  text-align: center;
+}
+
+div.header-letras {
+  border: none;
+  display:inline-block;
+  width: 3em;
+  height: 3em;
+  vertical-align: 1em;
+  text-align: center;
 }
