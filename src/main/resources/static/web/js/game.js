@@ -57,7 +57,45 @@ $(document).ready(function () {
 			placeSalvos(responseData.salvoes);
 		});
 	}
+
+	$("#save-ships").click(function(){
+		saveShipsLocations();
+	})
+
 })
+
+function saveShipsLocations(){
+	var ships = [];
+
+	$(".grid-stack-item").each(function(){
+		var type = $(this).attr("id");
+		var locations = [];
+
+		if (parseInt($(this).data("gs-width")) > 1){
+			for (var i = 0; i < $(this).data("gs-width"); i++){
+				var x = parseInt(($(this).data("gs-x")) + i ) + 1;
+				var y = parseInt(($(this).data("gs-y")) + 65);
+
+				locations.push( String.fromCharCode(y) + x );
+			}
+		} else {
+			for (var i = 0; i < $(this).data("gs-height"); i++){
+				var x = parseInt(($(this).data("gs-x")) + 1);
+				var y = parseInt(($(this).data("gs-y")) + i) + 65;
+
+				locations.push( String.fromCharCode(y) + x );
+			}
+		}
+// 		
+		
+		var ship = {
+			type: type,
+			location: locations	}
+		
+		ships.push(ship);
+	})
+	console.log(ships);
+};
 
 function createGamesPage () {
 	$("#running-games ol").empty();
@@ -243,7 +281,7 @@ function placeShips(ships) {
 }
 
 function createGameGrids() {
-	createGrid($("#game-grid"));
+//	createGrid($("#game-grid"));
 	createGrid($("#salvoes-grid"))
 }
 

@@ -1,0 +1,81 @@
+.grid-stack-item-content {
+    opacity: 0.9;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    
+}
+
+.carrier{
+    background-image: url('/resources/Carrier.gif');
+    width: 250px;
+    height: 50px; 
+}
+
+.battleship{
+    background-image: url('/resources/BattleShip.gif');
+    width: 200px;
+    height: 50px; 
+}
+
+.submarine{
+    background-image: url('/resources/sumarino-full.png');
+    width: 150px;
+    height: 50px; 
+}
+
+.destroyer{
+    background-image: url('/resources/Destroyer.gif');
+    width: 150px;
+    height: 50px;
+}
+
+.patrol{
+    background-image: url('/resources/PatrolBoat.gif');
+    width: 100px;
+    height: 50px;
+}
+
+.carrier.vertical{
+    background-image: url('/resources/Carrier-vertical.gif');
+    width: 50px;
+    height: 250px; 
+}
+
+.battleship.vertical{
+    background-image: url('/resources/BattleShip-vertical.gif');
+    width: 50px;
+    height: 200px; 
+}
+
+.submarine.vertical{
+    background-image: url('/resources/sumarino-full-vertical.png');
+    width: 50px;
+    height: 150px; 
+}
+
+.destroyer.vertical{
+    background-image: url('/resources/Destroyer-vertical.gif');
+    width: 50px;
+    height: 150px;
+}
+
+.patrol.vertical{
+    background-image: url('/resources/PatrolBoat-vertical.gif');
+    width: 50px;
+    height: 100px;
+}
+
+.grid-ships{
+    border: solid black;
+    height: 550px;
+    width: 550px;
+    background-size: 100%;
+}
+
+.grid-ships{
+    background-image: url("/resources/grilla.png");
+    padding-top: 50px;
+    padding-left: 50px;
+}
