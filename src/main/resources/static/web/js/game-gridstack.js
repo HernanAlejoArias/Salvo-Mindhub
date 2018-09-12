@@ -1,4 +1,4 @@
-function updateGameGrid(ships) {
+function updateGameGrid(ships, staticGridOption) {
     var options = {
         //grilla de 10 x 10
         width: 10,
@@ -15,7 +15,7 @@ function updateGameGrid(ships) {
         //permite que el widget ocupe mas de una columna
         disableOneColumnMode: true,
         //false permite mover, true impide
-        staticGrid: false,
+        staticGrid: staticGridOption,
         //activa animaciones (cuando se suelta el elemento se ve más suave la caida)
         animate: true,
         resizable: false
@@ -76,5 +76,6 @@ function willItFit(x, y, width, height){
 
 function removeShipsFromGrid(){
     grid = $('#grid').data('gridstack');
-    grid.removeAll(true)
+    grid.removeAll(true);
+    grid.destroy(false)
 };

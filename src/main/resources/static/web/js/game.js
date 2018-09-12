@@ -248,8 +248,10 @@ function playersData(gamePlayers, gamePlayerID) {
 
 function placeShips(ships) {
 	var shipsOnGrid = [];
+	var staticGridOption;
 
 	if (ships.length === 0) {
+		staticGridOption = false;
 		var carrier = {
 			el: $('<div id="carrier"><div class="grid-stack-item-content carrier"></div><div/>'),
 			x: 0,
@@ -301,6 +303,8 @@ function placeShips(ships) {
 		shipsOnGrid.push(battleship);
 
 	} else {
+		staticGridOption = true;
+
 		$("#save-ships").toggle(false);
 		for(var i = 0; i < ships.length; i++){
 			var isHorizontal;
@@ -337,7 +341,7 @@ function placeShips(ships) {
 		}
 	}
 
-	updateGameGrid(shipsOnGrid);
+	updateGameGrid(shipsOnGrid, staticGridOption);
 }
 
 function createGameGrids() {
