@@ -12,9 +12,9 @@ import java.util.*;
 @SpringBootApplication
 public class SalvoApplication {
 
-	public static final String DESTROYER = "Destroyer";
-	public static final String PATROL_BOAT = "Patrol Boat";
-	public static final String SUBMARINE = "Submarine";
+	public static final String DESTROYER = "destroyer";
+	public static final String PATROL_BOAT = "patrol";
+	public static final String SUBMARINE = "submarine";
 	public static final float WIN = 1;
 	public static final float LOSE = 0;
 	public static final float TIE = 0.5f;

@@ -1,4 +1,4 @@
-$(function () {
+function updateGameGrid(ships) {
     var options = {
         //grilla de 10 x 10
         width: 10,
@@ -17,26 +17,16 @@ $(function () {
         //false permite mover, true impide
         staticGrid: false,
         //activa animaciones (cuando se suelta el elemento se ve más suave la caida)
-        animate: true
+        animate: true,
+        resizable: false
     }
     //se inicializa el grid con las opciones
     $('.grid-stack').gridstack(options);
     grid = $('#grid').data('gridstack');
 
-    /* 			//agregando un elmento(widget) desde el javascript
-        grid.addWidget($('<div id="submarine"><div class="grid-stack-item-content submarineHorizontal"></div><div/>'),
-            1, 5, 3, 1, false, 1, 3, 1, 3, "submarine");
-
-        grid.addWidget($('<div id="destroyer"><div class="grid-stack-item-content destroyerHorizontal"></div><div/>'),
-            1, 8, 3, 1, false, 1, 3, 1, 3, "destroyer"); */
-
-    //verificando si un area se encuentra libre
-    //no está libre, false
-    //console.log(grid.isAreaEmpty(1, 8, 3, 1));
-    //está libre, true
-    //console.log(grid.isAreaEmpty(1, 7, 3, 1));
-    //todas las funciones se encuentran en la documentación
-    //https://github.com/gridstack/gridstack.js/tree/develop/doc
+    for(var i = 0; i < ships.length; i++ ){
+        grid.addWidget(ships[i].el, ships[i].x, ships[i].y, ships[i].width, ships[i].height);
+    }
 
     grid.resizable('.grid-stack-item', false);
 
@@ -48,8 +38,8 @@ $(function () {
         var y = parseInt(shipContainer.attr("data-gs-y"));
         var newHeight = parseInt(shipContainer.attr("data-gs-width"));
         var newWidth = parseInt(shipContainer.attr("data-gs-height"));
-
-        var willFit = grid.willItFit(x, y, newWidth, newHeight, false);
+        
+        var willFit = willItFit(x, y, newWidth, newHeight);
 
         if(selectedShip.hasClass("vertical")){
             areaEmpty = grid.isAreaEmpty(x + 1, y, newWidth - 1, newHeight)
@@ -72,4 +62,19 @@ $(function () {
         }
     })
 
-});
+}
+
+function willItFit(x, y, width, height){
+    if ((x + width) > 10){
+        return false
+    }
+    if((y + height) > 10){
+        return false
+    }
+    return true;
+}
+
+function removeShipsFromGrid(){
+    grid = $('#grid').data('gridstack');
+    grid.removeAll(true)
+};
