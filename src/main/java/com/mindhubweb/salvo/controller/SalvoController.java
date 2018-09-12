@@ -1,9 +1,6 @@
 package com.mindhubweb.salvo.controller;
 
-import com.mindhubweb.salvo.model.Game;
-import com.mindhubweb.salvo.model.GamePlayer;
-import com.mindhubweb.salvo.model.Player;
-import com.mindhubweb.salvo.model.Ship;
+import com.mindhubweb.salvo.model.*;
 import com.mindhubweb.salvo.repository.GamePlayerRepository;
 import com.mindhubweb.salvo.repository.GameRepository;
 import com.mindhubweb.salvo.repository.PlayerRepository;
@@ -138,17 +135,13 @@ public class SalvoController {
         GamePlayer gamePlayersActive = gamePlayerRepository.findById(gamePlayerId).orElse(null);
 
         if(loggedPlayer == null){
-            System.out.println("LoggedPlayer NULL");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (gamePlayersActive == null ){
-            System.out.println("GAME_DOESNT_EXIST");
             return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
         } else if (loggedPlayer.getId() != gamePlayersActive.getPlayer().getId()){
-            System.out.println("THAT_IS_NOT_YOUR_PLAYER");
             return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
         } else {
             if (gamePlayersActive.getShips().isEmpty() ){
-                System.out.println("CREATED");
 
                 gamePlayersActive.setShips(shipsToPlace);
 
@@ -156,9 +149,35 @@ public class SalvoController {
 
                 return new ResponseEntity<>("Ok", HttpStatus.CREATED);
             }else{
-                System.out.println("SHIPS_ALREADY_IN_PLACE");
                 return new ResponseEntity<>(ErrorMessages.SHIPS_ALREADY_IN_PLACE , HttpStatus.FORBIDDEN);
             }
+        }
+    }
+
+    @PostMapping("/games/players/{gamePlayerId}/salvos")
+    public ResponseEntity shootedSalvos(@PathVariable("gamePlayerId") long gamePlayerId, @RequestBody Salvo salvosToPlace){
+
+        Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
+        GamePlayer gamePlayersActive = gamePlayerRepository.findById(gamePlayerId).orElse(null);
+
+        if(loggedPlayer == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } else if (gamePlayersActive == null ){
+            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+        } else if (loggedPlayer.getId() != gamePlayersActive.getPlayer().getId()){
+            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+        } else {
+            if (gamePlayersActive.getSalvos().stream().anyMatch(salvo ->salvo.getTurn() == salvosToPlace.getTurn())){
+
+                return new ResponseEntity<>(ErrorMessages.SALVOES_ALREADY_SHOOTED , HttpStatus.FORBIDDEN);
+            }else{
+                gamePlayersActive.addSalvo(salvosToPlace);
+
+                gamePlayerRepository.save(gamePlayersActive);
+
+                return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+            }
+
         }
     }
 

@@ -537,3 +537,28 @@ function addShipsToGame(gamePlayerID) {
 			alert("Error Addind Ships: " + responseData.responseText)
 		})
 }
+
+function shotSalvoes(){
+
+	if (!gamePlayerID) {
+		var gamePlayerID = paramObj(window.location.search).gp;
+	}
+	var apiUrl = "/api/games/players/" + gamePlayerID + "/salvos";
+
+	$.post({
+		url: apiUrl,
+		data: JSON.stringify({
+			turn: 1,
+			locations: ["A1","A2","A5","B5","C9"]
+		}),
+		dataType: "text",
+		contentType: "application/json"
+	})
+		.done(function (responseData) {
+			console.log("Salvos Shooted: " + responseData.responseText)
+		})
+		.fail(function (responseData) {
+			alert("Error Addind Salvos: " + responseData.responseText)
+		})
+
+}

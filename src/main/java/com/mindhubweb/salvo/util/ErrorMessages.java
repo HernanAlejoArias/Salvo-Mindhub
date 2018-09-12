@@ -16,6 +16,8 @@ public final class ErrorMessages {
 
     public static final String SHIPS_ALREADY_IN_PLACE = "Ships are already in place";
 
+    public static final String SALVOES_ALREADY_SHOOTED = "Turn has salvoes already";
+
     private ErrorMessages(){
         //this prevents even the native class from
         //calling this actor as well :
