@@ -32,23 +32,33 @@ section header {
     background-color: lightcoral;
     border-radius: 50%;
     z-index: 2;
-}
+  }
 
 .hit {
     background-image: url("../Fire.gif");
     background-position:50% 50%;  /* Sets reference point to scale from */
     background-size:cover;        /* Sets background image to cover entire element */
     font-weight: bold;
+    z-index: 2;
+    height: 50px;
+    width: 50px;
+  }
+
+.game-cell {
+  height: 50px;
+  width: 50px
 }
 
   td {
-    width: 9.09%;
     position: relative;
+    line-height: 10px;
   }
+
   td:after {
     content: '';
     display: block;
   }
+
   td .content {
     position: absolute;
     top: 0;
@@ -57,3 +67,35 @@ section header {
     right: 0;
     background: gold;
   }
+
+  .table td{
+    width: 40px;
+    height: 40px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  table#salvoes-grid {
+    height: 400px;
+    width: 400px;
+  }
+
+  #salvoes-grid .can-shot:hover{
+    background-image: url("../resources/mira.png");
+    background-position:50% 50%;  /* Sets reference point to scale from */
+    background-size:cover;        /* Sets background image to cover entire element */
+  } 
+
+  #salvoes-grid .shooted:hover{
+    background-image: url("../resources/cancel.png");
+    background-position:50% 50%;  /* Sets reference point to scale from */
+    background-size:cover;        /* Sets background image to cover entire element */
+  } 
+
+  #salvoes-grid .shooted{
+    background-image: url("../resources/mira.png");
+    background-position:50% 50%;  /* Sets reference point to scale from */
+    background-size:cover;        /* Sets background image to cover entire element */
+  }
+
+  

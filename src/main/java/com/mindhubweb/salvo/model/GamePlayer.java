@@ -130,4 +130,17 @@ public class GamePlayer {
     public void setSalvos(Set<Salvo> salvos) {
         this.salvos = salvos;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamePlayer that = (GamePlayer) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

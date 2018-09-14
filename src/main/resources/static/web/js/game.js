@@ -11,18 +11,6 @@ $(document).ready(function () {
 
 		// Crea la grilla de Salvoes vacia
 		createGameGrids();
-
-/* 		let gamePlayerID = paramObj(window.location.search).gp;
-		let apiCallURL = "http://localhost:8080/api/game_view/" + gamePlayerID;
-		let playerOne;
-
-		$.get(apiCallURL, function (responseData) {
-			console.log("api/game_view -> .get")
-		}).done(function (responseData) {
-			placeShips(responseData.ships);
-			playersData(responseData.gamePlayers, gamePlayerID);
-			placeSalvos(responseData.salvoes);
-		}); */
 	}
 })
 
@@ -214,23 +202,58 @@ function createLeaderBoard(responseData) {
 	})
 }
 
-function placeSalvos(salvoes) {
+function placeSalvos(salvoes, ships) {
 	$.each(salvoes, function (index, salvo) {
 		if (salvo.player == playerOne.id) {
-			placeSalvo($("#salvoes-grid"), salvo.turn, salvo.locations)
+			placeSalvoOnSalvosGrid(salvo.turn, salvo.locations)
 		} else {
-			placeSalvo($("#game-grid"), salvo.turn, salvo.locations)
+			placeSalvoOnGameGrid( salvo.locations, ships)
 		}
 	})
 }
 
-function placeSalvo(el_grid, turn, locations) {
+function placeSalvoOnSalvosGrid(turn, locations) {
+
+	var el_grid = $("#salvoes-grid");
+
 	$.each(locations, function (index, location) {
-		el_salvo = el_grid.find("." + location).text(turn);
+		el_salvo = el_grid.find("#" + location).text(turn);
+		el_salvo.removeClass("can-shot");
+		el_salvo.removeClass("shooted");
 		if (el_salvo.data("shipOnCell") == true) {
 			el_salvo.addClass("hit");
 		} else {
 			el_salvo.addClass("salvo");
+		}
+	})
+}
+
+function placeSalvoOnGameGrid(locations, ships) {
+
+	el_grid = $("#game-grid");
+
+	$.each(locations, function (index, location) {
+
+		var x = (location.slice(1, 2)) - 1;
+		var y = (location.slice(0, 1).charCodeAt(0) - 65);
+	
+		var fromTop = y * 50;
+		var fromLeft = x * 50;
+		var cellId = location.slice(0, 1) + (location.slice(1, 2));
+
+		$("#grid").append($("<div id=" + cellId + " class='game-cell salvo' style='position: absolute; top:" + fromTop + "px; left: "+ fromLeft +"px;'></div>").data("shipOnCell", true));
+
+	})
+
+	$.each(ships, function (index, ship) {
+
+		for(var i = 0; i < ship.locations.length; i++){
+			if ($("#grid #"+ship.locations[i]).data("shipOnCell") == true) {
+				$("#grid #"+ship.locations[i]).removeClass("salvo");
+				$("#grid #"+ship.locations[i]).addClass("hit");
+			} else {
+				$("#grid #"+ship.locations[i]).addClass("salvo");
+			}	
 		}
 	})
 }
@@ -258,7 +281,8 @@ function placeShips(ships) {
 			y: 0,
 			width: 5,
 			height: 1,
-			autoPosition: false}
+			autoPosition: false
+		}
 
 		shipsOnGrid.push(carrier);
 
@@ -268,7 +292,8 @@ function placeShips(ships) {
 			y: 1,
 			width: 2,
 			height: 1,
-			autoPosition: false}
+			autoPosition: false
+		}
 
 		shipsOnGrid.push(patrol);
 
@@ -278,7 +303,8 @@ function placeShips(ships) {
 			y: 2,
 			width: 3,
 			height: 1,
-			autoPosition: false}
+			autoPosition: false
+		}
 
 		shipsOnGrid.push(submarine);
 
@@ -288,7 +314,8 @@ function placeShips(ships) {
 			y: 3,
 			width: 3,
 			height: 1,
-			autoPosition: false}
+			autoPosition: false
+		}
 
 		shipsOnGrid.push(destroyer);
 
@@ -298,7 +325,8 @@ function placeShips(ships) {
 			y: 4,
 			width: 4,
 			height: 1,
-			autoPosition: false}
+			autoPosition: false
+		}
 
 		shipsOnGrid.push(battleship);
 
@@ -306,31 +334,33 @@ function placeShips(ships) {
 		staticGridOption = true;
 
 		$("#save-ships").toggle(false);
-		for(var i = 0; i < ships.length; i++){
+		for (var i = 0; i < ships.length; i++) {
 			var isHorizontal;
 
-			if(ships[i].locations[0].slice(0,1) === ships[i].locations[1].slice(0,1) )
-				{isHorizontal = true}else{isHorizontal = false}
+			if (ships[i].locations[0].slice(0, 1) === ships[i].locations[1].slice(0, 1)) {
+				isHorizontal = true
+			} else {
+				isHorizontal = false
+			}
 
-			var x = (ships[i].locations[0].slice(1,2)) - 1;
-			var y = (ships[i].locations[0].slice(0,1).charCodeAt(0) - 65);
+			var x = (ships[i].locations[0].slice(1, 2)) - 1;
+			var y = (ships[i].locations[0].slice(0, 1).charCodeAt(0) - 65);
 			var width;
 			var height;
-			var shipType; 
+			var shipType;
 
-			if (isHorizontal){
+			if (isHorizontal) {
 				width = ships[i].locations.length;
 				height = 1;
 				shipType = ships[i].type;
-			}
-			else {
+			} else {
 				width = 1;
 				height = ships[i].locations.length;
 				shipType = ships[i].type + " vertical";
-			}	
+			}
 
 			var ship = {
-				el:$('<div id="' + ships[i].type + '"><div class="grid-stack-item-content ' + shipType + '"></div><div/>'),
+				el: $('<div id="' + ships[i].type + '"><div style="z-index: -2" class="grid-stack-item-content ' + shipType + '"></div><div/>'),
 				x: x,
 				y: y,
 				width: width,
@@ -339,9 +369,13 @@ function placeShips(ships) {
 			}
 			shipsOnGrid.push(ship);
 		}
+
+		$(".grid-stack-item").unbind("dblclick")
 	}
 
 	updateGameGrid(shipsOnGrid, staticGridOption);
+//	$("#game-grid").off("dblclick", ".grid-stack-item");
+	return shipsOnGrid;
 }
 
 function createGameGrids() {
@@ -354,29 +388,33 @@ function createGameGrids() {
 	$.get(apiCallURL, function (responseData) {
 		console.log("api/game_view -> .get")
 	}).done(function (responseData) {
-		placeShips(responseData.ships);
+		var shipsOnGrid = placeShips(responseData.ships);
 		playersData(responseData.gamePlayers, gamePlayerID);
-		placeSalvos(responseData.salvoes);
+		placeSalvos(responseData.salvoes, responseData.ships);
+		administrateTurns(responseData.ships, responseData.salvoes)
 	});
 }
 
 function createGrid(el_grid) {
 
-	// Filas
-	for (let i = 64; i < 76; i++) {
-		el_li_tr = $(document.createElement("tr"));
-		el_grid.append(el_li_tr);
-		for (let j = 0; j < 11; j++) {
-			el_li_td = $(document.createElement("td")).addClass("content");
-			if (i == 64 && j == 0) {
-				el_li_tr.append(el_li_td.text(""));
-			} else if (i == 64) {
-				el_li_tr.append(el_li_td.text(j));
-			} else if (j == 0) {
-				el_li_tr.append(el_li_td.text(String.fromCharCode(i)));
-			} else {
-				el_li_tr.append(el_li_td.text(""));
-				el_li_td.attr("class", String.fromCharCode(i) + j);
+	if (el_grid.children().length === 0){
+		// Filas
+		for (let i = 64; i < 76; i++) {
+			el_li_tr = $(document.createElement("tr"));
+			el_grid.append(el_li_tr);
+			for (let j = 0; j < 11; j++) {
+				el_li_td = $(document.createElement("td"));
+				if (i == 64 && j == 0) {
+					el_li_tr.append(el_li_td.text(""));
+				} else if (i == 64) {
+					el_li_tr.append(el_li_td.text(j));
+				} else if (j == 0) {
+					el_li_tr.append(el_li_td.text(String.fromCharCode(i)));
+				} else {
+					el_li_tr.append(el_li_td.text(""));
+					el_li_td.attr("id", String.fromCharCode(i) + j);
+					el_li_td.addClass("can-shot");
+				}
 			}
 		}
 	}
@@ -462,7 +500,6 @@ function setListeners() {
 		var joinGameId = $(this).data("gameId");
 
 		joinGame(joinGameId);
-
 	})
 
 	$(".bote").click(function () {
@@ -511,6 +548,26 @@ function setListeners() {
 	$("#save-ships").click(function () {
 		addShipsToGame()
 	})
+
+	$("#salvoes-grid").on("click", ".can-shot", function () {
+		if($("#salvoes-grid .shooted").length < 5){
+			$(this).removeClass("can-shot");
+			$(this).addClass("shooted");	
+		}else {
+			alert("you can only shot " + 5);
+		}
+	});
+
+	$("#salvoes-grid").on("click", ".shooted", function () {
+		$(this).removeClass("shooted");
+		$(this).addClass("can-shot");
+	});
+
+	$("#btn-shot").on("click",function(){ 
+		shotSalvoes($(this).data("turn-nro"));
+		removeShipsFromGrid();
+		createGameGrids();
+	});
 }
 
 function addShipsToGame(gamePlayerID) {
@@ -538,7 +595,7 @@ function addShipsToGame(gamePlayerID) {
 		})
 }
 
-function shotSalvoes(){
+function shotSalvoes(turn) {
 
 	if (!gamePlayerID) {
 		var gamePlayerID = paramObj(window.location.search).gp;
@@ -546,19 +603,40 @@ function shotSalvoes(){
 	var apiUrl = "/api/games/players/" + gamePlayerID + "/salvos";
 
 	$.post({
-		url: apiUrl,
-		data: JSON.stringify({
-			turn: 1,
-			locations: ["A1","A2","A5","B5","C9"]
-		}),
-		dataType: "text",
-		contentType: "application/json"
-	})
+			url: apiUrl,
+			data: JSON.stringify({
+				turn: turn,
+				locations: getShootedSalvos()
+			}),
+			dataType: "text",
+			contentType: "application/json"
+		})
 		.done(function (responseData) {
 			console.log("Salvos Shooted: " + responseData.responseText)
 		})
 		.fail(function (responseData) {
 			alert("Error Addind Salvos: " + responseData.responseText)
 		})
+}
 
+function administrateTurns(ships, salvoes){
+	if (ships.length > 0){
+		$("#btn-shot").toggle(true).data("turn-nro",salvoes.length + 1 );
+	} else {
+		$("#btn-shot").toggle(false);
+	}
+}
+
+function getShootedSalvos(){
+	var salvos = [];
+
+	if ($(".shooted").length > 0){
+		$(".shooted").each(function(){
+			salvos.push($(this).attr("id"));
+		})
+	}else{
+		alert("No salvos were setted")
+	}
+
+	return salvos;
 }

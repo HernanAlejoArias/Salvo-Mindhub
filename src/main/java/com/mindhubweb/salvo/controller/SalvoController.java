@@ -171,6 +171,13 @@ public class SalvoController {
 
                 return new ResponseEntity<>(ErrorMessages.SALVOES_ALREADY_SHOOTED , HttpStatus.FORBIDDEN);
             }else{
+
+                Salvo lastSalvo = gamePlayersActive.getSalvos().stream().filter(salvo -> salvo.getGamePlayer().equals(gamePlayersActive)).max((salvo1, salvo2) -> Integer.compare(salvo1.getTurn(), salvo2.getTurn())).orElse(null);
+                if (lastSalvo != null){
+                    salvosToPlace.setTurn(lastSalvo.getTurn() + 1);
+                } else {
+                    salvosToPlace.setTurn(1);
+                }
                 gamePlayersActive.addSalvo(salvosToPlace);
 
                 gamePlayerRepository.save(gamePlayersActive);
