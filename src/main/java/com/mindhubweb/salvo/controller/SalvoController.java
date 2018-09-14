@@ -4,7 +4,7 @@ import com.mindhubweb.salvo.model.*;
 import com.mindhubweb.salvo.repository.GamePlayerRepository;
 import com.mindhubweb.salvo.repository.GameRepository;
 import com.mindhubweb.salvo.repository.PlayerRepository;
-import com.mindhubweb.salvo.util.ErrorMessages;
+import com.mindhubweb.salvo.util.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +43,7 @@ public class SalvoController {
 
         if ( username.isEmpty() || password.isEmpty() ) {
 
-            return new ResponseEntity<>(ErrorMessages.ERROR_EMPTY_VALUE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Messages.ERROR_EMPTY_VALUE, HttpStatus.BAD_REQUEST);
         } else {
             Player player = playerRepository.findByUserName(username);
 
@@ -53,7 +53,7 @@ public class SalvoController {
 
                 return new ResponseEntity<>(createdPlayer.getUserName(), HttpStatus.CREATED);
             }else{
-                return new ResponseEntity<>(ErrorMessages.ERROR_NAME_TAKEN, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(Messages.ERROR_NAME_TAKEN, HttpStatus.FORBIDDEN);
             }
         }
     }
@@ -73,7 +73,7 @@ public class SalvoController {
         Player loggedPlayer = playerRepository.findByUserName(getloggedUserName());
 
         if(loggedPlayer == null){
-            return new ResponseEntity<>(ErrorMessages.NOT_LOGGED_IN , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.NOT_LOGGED_IN , HttpStatus.FORBIDDEN);
         }else {
             Game newGame = new Game();
             GamePlayer tempGPA = new GamePlayer(newGame, loggedPlayer);
@@ -108,14 +108,14 @@ public class SalvoController {
         if(loggedPlayer == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (selected_game == null ){
-            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
         }
         else {
 
             Set<GamePlayer> gamePlayersSelectedGame = gamePlayerRepository.findByGame(selected_game);
 
             if (gamePlayersSelectedGame.size() > 1){
-                return new ResponseEntity<>(ErrorMessages.GAME_FULL , HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(Messages.GAME_FULL , HttpStatus.FORBIDDEN);
             }else {
                 GamePlayer tempGPA = new GamePlayer(selected_game, loggedPlayer);
                 gamePlayerRepository.save(tempGPA);
@@ -137,9 +137,9 @@ public class SalvoController {
         if(loggedPlayer == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (gamePlayersActive == null ){
-            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
         } else if (loggedPlayer.getId() != gamePlayersActive.getPlayer().getId()){
-            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
         } else {
             if (gamePlayersActive.getShips().isEmpty() ){
 
@@ -147,9 +147,9 @@ public class SalvoController {
 
                 gamePlayerRepository.save(gamePlayersActive);
 
-                return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+                return new ResponseEntity<>(Messages.OK, HttpStatus.CREATED);
             }else{
-                return new ResponseEntity<>(ErrorMessages.SHIPS_ALREADY_IN_PLACE , HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(Messages.SHIPS_ALREADY_IN_PLACE , HttpStatus.FORBIDDEN);
             }
         }
     }
@@ -163,13 +163,13 @@ public class SalvoController {
         if(loggedPlayer == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else if (gamePlayersActive == null ){
-            return new ResponseEntity<>(ErrorMessages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.GAME_DOESNT_EXIST , HttpStatus.FORBIDDEN);
         } else if (loggedPlayer.getId() != gamePlayersActive.getPlayer().getId()){
-            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
         } else {
             if (gamePlayersActive.getSalvos().stream().anyMatch(salvo ->salvo.getTurn() == salvosToPlace.getTurn())){
 
-                return new ResponseEntity<>(ErrorMessages.SALVOES_ALREADY_SHOOTED , HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(Messages.SALVOES_ALREADY_SHOOTED , HttpStatus.FORBIDDEN);
             }else{
 
                 Salvo lastSalvo = gamePlayersActive.getSalvos().stream().filter(salvo -> salvo.getGamePlayer().equals(gamePlayersActive)).max((salvo1, salvo2) -> Integer.compare(salvo1.getTurn(), salvo2.getTurn())).orElse(null);
@@ -182,7 +182,7 @@ public class SalvoController {
 
                 gamePlayerRepository.save(gamePlayersActive);
 
-                return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+                return new ResponseEntity<>(Messages.OK, HttpStatus.CREATED);
             }
 
         }
@@ -196,7 +196,7 @@ public class SalvoController {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerID).orElse(null);
 
         if ( loggedPlayer.getId() != gamePlayer.getPlayer().getId() ){
-            return new ResponseEntity<>(ErrorMessages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Messages.THAT_IS_NOT_YOUR_PLAYER , HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(gamePlayer.makeGameViewDTO() , HttpStatus.OK);
             //return gp.makeGameViewDTO();

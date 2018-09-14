@@ -1,6 +1,6 @@
 package com.mindhubweb.salvo.util;
 
-public final class ErrorMessages {
+public final class Messages {
 
     public static final String ERROR_EMPTY_VALUE = "You can't use empty username or password";
 
@@ -18,7 +18,9 @@ public final class ErrorMessages {
 
     public static final String SALVOES_ALREADY_SHOOTED = "Turn has salvoes already";
 
-    private ErrorMessages(){
+    public static final String OK = "Post executed Ok";
+
+    private Messages(){
         //this prevents even the native class from
         //calling this actor as well :
         throw new AssertionError();
