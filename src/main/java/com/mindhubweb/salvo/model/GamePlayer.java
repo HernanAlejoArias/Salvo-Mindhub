@@ -76,7 +76,8 @@ public class GamePlayer {
         dto.put("ships", this.ships.stream().map(Ship::makeGameViewShipDTO).collect(Collectors.toList()));
         dto.put("salvoes", this.game.getGamePlayers()
                 .stream().flatMap(gamePlayer -> gamePlayer.getSalvos().stream().map(Salvo::makeGameViewSalvoDTO)));
-       return dto;
+        dto.put("sinks", makeSinkDTO());
+        return dto;
    }
 
     public Map<String, Object> makeGameViewPlayerDTO(){
@@ -143,4 +144,43 @@ public class GamePlayer {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public GamePlayer getOpponent() {
+
+        GamePlayer opponentGamePlayer = this.getGame().getGamePlayers().stream()
+                .filter(gamePlayer -> this.getId() != gamePlayer.getId())
+                .findFirst().orElse(null);
+
+        return opponentGamePlayer;
+    }
+
+    public Map<String, Integer> getSinks(Set<Ship> ships) {
+
+        Map<String, Integer> sinks = new HashMap<>();
+
+        for (Ship ship:ships) {
+            int afloatCells = ship.getLocations().size();
+
+            for (Salvo salvo : this.getSalvos()) {
+                for (String salvoLocation : salvo.getLocations()) {
+                    if (ship.getLocations().indexOf(salvoLocation) != -1) {
+                        afloatCells -= 1;
+                    }
+
+                    if (afloatCells == 0){
+                        sinks.put(ship.getType(), salvo.getTurn());
+                    }
+                }
+            }
+        }
+
+        return sinks;
+    }
+
+    public Map<String, Integer> makeSinkDTO(){
+        Map<String, Integer> sinks = new HashMap<>();
+
+        return getSinks(this.getOpponent().getShips());
+    }
+
 }

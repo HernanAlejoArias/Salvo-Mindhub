@@ -2,6 +2,7 @@ package com.mindhubweb.salvo.model;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Salvo {
@@ -29,9 +30,13 @@ public class Salvo {
 
     public Map<String, Object> makeGameViewSalvoDTO() {
         Map<String, Object> dto = new HashMap<>();
-        dto.put("locations", locations);
+        GamePlayer opponent = this.gamePlayer.getOpponent();
+
         dto.put("player", this.gamePlayer.getPlayer().getId());
+        dto.put("locations", locations);
         dto.put("turn", this.turn);
+        dto.put("hits", getHits(opponent.getShips(), this));
+
         return dto;
     }
 
@@ -61,5 +66,22 @@ public class Salvo {
 
     public void setLocations(List<String> locations) {
         this.locations = locations;
+    }
+
+    private List<String> getHits(Set<Ship> ships, Salvo salvo) {
+
+        List<String> hits = new ArrayList<>();
+
+        for (String salvoLocation : salvo.getLocations()) {
+            for (Ship ship : ships) {
+                List<String> shipLocations = ship.getLocations();
+
+                if (shipLocations.indexOf(salvoLocation) != -1) {
+                    hits.add(salvoLocation);
+                }
+            }
+        }
+
+        return hits;
     }
 }
